@@ -4,11 +4,13 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCloudinary } from "../utils/CloudinaryContext";
+import { useSearch } from "../utils/SearchContext";
 import axios from "axios";
 
 const Navbar = ({ SideBar, SidbarHidden }) => {
   const navigate = useNavigate();
- 
+  const { search, setsearch } = useSearch();
+
   const [profPic, setProfPic] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpCKq1XnPYYDaUIlwlsvmLPZ-9-rdK28RToA&s"
   );
@@ -17,7 +19,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
   const { imageUrl } = useCloudinary();
   const [id, setid] = useState("");
   const [isListening, setIsListening] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
+
   const recognitionRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -33,14 +35,12 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     };
   }, []);
 
-  // Load profile pic from localStorage
+  // Get user data from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-
         if (parsedUser?.profilePic || parsedUser?._id) {
           setProfPic(parsedUser.profilePic);
           setid(parsedUser._id);
@@ -51,7 +51,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     }
   }, []);
 
-  // Initialize Speech Recognition
+  // Setup speech recognition
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -68,8 +68,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      setSearchInput(transcript);
-      updateSearchTerm(transcript);  // Update the search term in context
+      setsearch(transcript); // ✅ Use context function correctly
       setIsListening(false);
     };
 
@@ -83,14 +82,15 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     };
 
     recognitionRef.current = recognition;
-  }, []);
+  }, [setsearch]);
 
   const token = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    axios.get("http://localhost:9999/auth/logout")
+    axios
+      .get("http://localhost:9999/auth/logout")
       .then((res) => {
         console.log(res.data);
       })
@@ -101,8 +101,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchInput(e.target.value);
-    updateSearchTerm(e.target.value);  // Update the search term in context
+    setsearch(e.target.value);
   };
 
   return (
@@ -124,8 +123,8 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
         <div className="relative w-full">
           <input
             type="text"
-            value={searchInput}
-            onChange={handleSearchChange}  // Handle input change
+            value={search}
+            onChange={handleSearchChange}
             className="w-full px-5 py-2 rounded-full text-white outline-none border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-black"
             placeholder="Search"
           />
@@ -142,8 +141,9 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
               recognitionRef.current.start();
             }
           }}
-          className={`hidden md:block p-2 rounded-full cursor-pointer transition ${isListening ? "bg-blue-700 animate-pulse" : "bg-gray-800 hover:bg-gray-700"
-            }`}
+          className={`hidden md:block p-2 rounded-full cursor-pointer transition ${
+            isListening ? "bg-blue-700 animate-pulse" : "bg-gray-800 hover:bg-gray-700"
+          }`}
         />
       </div>
 
@@ -170,27 +170,30 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
           />
           {showLogin && (
             <div className="absolute right-0 top-12 bg-gray-800 text-white rounded-lg shadow-lg w-40 flex flex-col z-50">
-              {
-                token && <button className="py-2 px-4 hover:bg-gray-700" onClick={() => {
-                  navigate(`/profile/${id}`);
-                }}>Profile</button>
-              }
-              {
-                !token && <button
+              {token && (
+                <button
+                  className="py-2 px-4 hover:bg-gray-700"
+                  onClick={() => navigate(`/profile/${id}`)}
+                >
+                  Profile
+                </button>
+              )}
+              {!token && (
+                <button
                   onClick={() => navigate("/login")}
                   className="py-2 px-4 hover:bg-gray-700"
                 >
                   Login
                 </button>
-              }
-              {
-                token && <button
+              )}
+              {token && (
+                <button
                   onClick={handleLogout}
                   className="py-2 px-4 hover:bg-gray-700"
                 >
                   Logout
                 </button>
-              }
+              )}
             </div>
           )}
         </div>

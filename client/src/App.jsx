@@ -23,7 +23,7 @@ function App() {
 
   return (
    
-      <div className='bg-black overflow-hidden'>
+      <div className='bg-black min-h-screen overflow-hidden'>
         <Router>
           <Navbar SideBar={SideBar} SidbarHidden={SidbarHidden} />
           <Routes>
