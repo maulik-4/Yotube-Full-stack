@@ -53,7 +53,7 @@ const Login = () => {
                     <input type="text" value={user.userName} onChange={(e) => {
                         handleInput(e,"userName");
                     }} className="bg-[#212121] text-center w-[15vw] rounded-[10px] py-[1.5vw] h-[2vw] focus:border-2 forced-colors:grayscale-25" placeholder="userName" />
-                    <input type="text" value={user.password} onChange={(e) =>{
+                    <input type="password" value={user.password} onChange={(e) =>{
                         handleInput(e,"password");
                     }} className="bg-[#212121] text-center w-[15vw] rounded-[10px] py-[1.5vw] h-[2vw] focus:border-2 forced-colors:grayscale-25" placeholder="Password" />
                 </div>
