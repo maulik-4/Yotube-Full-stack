@@ -15,7 +15,9 @@ function Admin() {
         toast.error("Please login as Admin  to access this page");
         return;
       }
-      setUsers(res.data.users);
+      const Data = res.data.users;
+      const reqData = Data.filter((user) => user.role !== "admin");
+      setUsers(reqData);
     } catch (err) {
       console.error("Error fetching users:", err);
     } finally {
@@ -50,38 +52,55 @@ function Admin() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="p-6 text-white">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <table className="w-full border border-collapse border-gray-300">
+    <div className="p-6 text-white min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <h1 className="text-3xl font-extrabold mb-6 text-blue-400 tracking-wide">
+      Admin Dashboard
+    </h1>
+  
+    <div className="overflow-x-auto rounded-xl shadow-lg">
+      <table className="min-w-full text-sm bg-gray-800 rounded-xl overflow-hidden">
         <thead>
-          <tr className="bg-blue-600">
-            <th className="border p-2">Username</th>
-            <th className="border p-2">Channel Name</th>
-            <th className="border p-2">Role</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Action</th>
+          <tr className="bg-blue-600 text-white uppercase text-xs tracking-wider">
+            <th className="px-6 py-4 text-left">Username</th>
+            <th className="px-6 py-4 text-left">Channel Name</th>
+            <th className="px-6 py-4 text-left">Role</th>
+            <th className="px-6 py-4 text-left">Status</th>
+            <th className="px-6 py-4 text-left">Action</th>
           </tr>
         </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user._id} className="text-center">
-              <td className="border p-2">{user.userName}</td>
-              <td className="border p-2">{user.channelName}</td>
-              <td className="border p-2">{user.role}</td>
-              <td className="border p-2">{user.isBlocked ? 'Blocked' : 'Active'}</td>
-              <td className="border p-2">
-                {user.role !== 'admin' && (
+        <tbody className="divide-y divide-gray-700">
+          {users.map((user) => (
+            <tr
+              key={user._id}
+              className="hover:bg-gray-700 transition duration-200 ease-in-out"
+            >
+              <td className="px-6 py-4">{user.userName}</td>
+              <td className="px-6 py-4">{user.channelName}</td>
+              <td className="px-6 py-4 capitalize">{user.role}</td>
+              <td className="px-6 py-4">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.isBlocked
+                      ? "bg-red-600 text-white"
+                      : "bg-green-600 text-white"
+                  }`}
+                >
+                  {user.isBlocked ? "Blocked" : "Active"}
+                </span>
+              </td>
+              <td className="px-6 py-4">
+                {user.role !== "admin" && (
                   user.isBlocked ? (
-                    <button 
-                      onClick={() => unblockUser(user._id)} 
-                      className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                    <button
+                      onClick={() => unblockUser(user._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md transition duration-200"
                     >
                       Unblock
                     </button>
                   ) : (
-                    <button 
-                      onClick={() => blockUser(user._id)} 
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                    <button
+                      onClick={() => blockUser(user._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md transition duration-200"
                     >
                       Block
                     </button>
@@ -92,8 +111,11 @@ function Admin() {
           ))}
         </tbody>
       </table>
-      <ToastContainer position='top-right' />
     </div>
+  
+    <ToastContainer position="top-right" theme="dark" />
+  </div>
+  
   );
 }
 

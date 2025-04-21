@@ -8,6 +8,10 @@ const Homepage = ({ SideBar }) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
   const { search } = useSearch();
+  const filteredVideos = videos.filter(video =>
+    !video.user?.isBlocked &&
+    (!search || video.title.toLowerCase().includes(search.toLowerCase()))
+  );
 
   const options = [
     "All", "Music", "Dramedy", "T-Series", "Tamil Cinema", "Mixes",
@@ -23,18 +27,13 @@ const Homepage = ({ SideBar }) => {
       .catch((err) => console.log(err));
   }, []);
 
- 
- const filteredVideos = videos.filter(video => 
-  !video.user?.isBlocked && 
-  (!search || video.title.toLowerCase().includes(search.toLowerCase()))
-);
-
+  
   return (
     <div className="flex relative min-h-screen bg-black text-white overflow-hidden">
       {SideBar && <Sidebar />}
 
       <div className="flex flex-col w-full">
-        
+
         <div className="flex gap-3 p-4 overflow-x-auto scrollbar-hide snap-x">
           {options.map((item, index) => (
             <button

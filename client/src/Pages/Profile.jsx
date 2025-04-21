@@ -7,6 +7,9 @@ const Profile = ({ SideBar }) => {
   const [userVideos, setUserVideos] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = JSON.parse( localStorage.getItem('user'));
+  const {role} = user;
+  const userInfo = userVideos.length > 0 ? userVideos[0].user : null;
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -21,8 +24,15 @@ const Profile = ({ SideBar }) => {
     fetchUser();
   }, [id]);
 
-  // Get user info from first video
-  const userInfo = userVideos.length > 0 ? userVideos[0].user : null;
+ 
+  
+  
+if(role  == "admin"){
+  navigate('/admin');
+}
+
+
+ 
 
   return (
     <div className="bg-black flex w-full min-h-screen text-white flex-col md:flex-row">

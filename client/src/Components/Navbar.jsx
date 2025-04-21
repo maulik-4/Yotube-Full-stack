@@ -10,17 +10,19 @@ import axios from "axios";
 const Navbar = ({ SideBar, SidbarHidden }) => {
   const navigate = useNavigate();
   const { search, setsearch } = useSearch();
-
-  const [profPic, setProfPic] = useState(
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpCKq1XnPYYDaUIlwlsvmLPZ-9-rdK28RToA&s"
-  );
   const [showLogin, setShowLogin] = useState(false);
   const loginRef = useRef(null);
   const { imageUrl } = useCloudinary();
   const [id, setid] = useState("");
   const [isListening, setIsListening] = useState(false);
-
   const recognitionRef = useRef(null);
+  const token = localStorage.getItem("token");
+  const [profPic, setProfPic] = useState(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpCKq1XnPYYDaUIlwlsvmLPZ-9-rdK28RToA&s"
+  );
+
+
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -84,7 +86,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     recognitionRef.current = recognition;
   }, [setsearch]);
 
-  const token = localStorage.getItem("token");
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -143,9 +145,8 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
               recognitionRef.current.start();
             }
           }}
-          className={`hidden md:block p-2 rounded-full cursor-pointer transition ${
-            isListening ? "bg-blue-700 animate-pulse" : "bg-gray-800 hover:bg-gray-700"
-          }`}
+          className={`hidden md:block p-2 rounded-full cursor-pointer transition ${isListening ? "bg-blue-700 animate-pulse" : "bg-gray-800 hover:bg-gray-700"
+            }`}
         />
       </div>
 

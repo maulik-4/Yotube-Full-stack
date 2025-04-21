@@ -10,6 +10,7 @@ import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Upload from './Pages/Upload';
 import Admin from './Pages/Admin';
+import Footer from './Components/Footer';
 
 
 function App() {
@@ -18,9 +19,6 @@ function App() {
   function SidbarHidden() {
     setSidebar((prev) => !prev);
   }
-
-  const user = localStorage.getItem('user');
-  const profilePic = localStorage.getItem('profilePic');
 
   return (
    
@@ -36,6 +34,7 @@ function App() {
             <Route path='/upload' element={<Upload />} />
             <Route path='/admin' element={<Admin />} />
           </Routes>
+          <Footer/>
         </Router>
       </div>
     

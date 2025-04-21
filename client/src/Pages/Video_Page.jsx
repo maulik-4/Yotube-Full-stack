@@ -15,6 +15,15 @@ const Video_Page = ({ SideBar }) => {
   const [dislike, setdislike] = useState();
   const [views , setviews] = useState();
   const navigate = useNavigate();
+  const videoLink = video_Data?.videoLink || 'https://www.w3schools.com/html/mov_bbb.mp4';
+  const title = video_Data?.title || 'Loading...';
+  const description = video_Data?.description || 'Loading...';
+  const channelName = video_Data?.user?.channelName || 'Loading...';
+  const profilePic = video_Data?.user?.profilePic || 'https://via.placeholder.com/150';
+  const [videos, setVideos] = useState([]);
+
+
+
   const HandleLikes = async () => {
     try {
       const res = await axios.put(`http://localhost:9999/api/like/${id}`);
@@ -47,7 +56,7 @@ const Video_Page = ({ SideBar }) => {
   const HanldeShare = async()=>{
     try{
       await navigator.clipboard.writeText(`http://localhost:5173/watch/${id}`);
-      alert("Link Copied to Clipboard") 
+      toast.success("Link Copied to Clipboard") ;
     }
     catch(err){
       console.log(err);
@@ -73,13 +82,8 @@ const Video_Page = ({ SideBar }) => {
       .catch((err) => console.log(err));
   }, [id]);
 
-  const videoLink = video_Data?.videoLink || 'https://www.w3schools.com/html/mov_bbb.mp4';
-  const title = video_Data?.title || 'Loading...';
-  const description = video_Data?.description || 'Loading...';
-  const channelName = video_Data?.user?.channelName || 'Loading...';
-  const profilePic = video_Data?.user?.profilePic || 'https://via.placeholder.com/150';
-  const [videos, setVideos] = useState([]);
-  console.log(views)
+  
+  
 
   useEffect(() => {
     axios.get("http://localhost:9999/api/getAllVideos")
