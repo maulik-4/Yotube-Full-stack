@@ -1,7 +1,8 @@
+require('dotenv').config();
 const User = require('../Modals/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+
 const SECRET_KEY = process.env.SECRET_KEY;
 
 // Cookie config
@@ -75,6 +76,7 @@ exports.userSignin = async (req, res) => {
       token: token,
       user: cleanUser
     });
+    console.log('JWT Secret Key:', SECRET_KEY);
 
   } catch (err) {
     console.error(err);
