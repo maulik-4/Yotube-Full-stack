@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-const MONGO_URI = process.env.MONGO_URL || "mongodb://localhost:27017/Youtube-Backend";
-mongoose.connect(MONGO_URI)
+const MONGO_URL = process.env.MONGO_URL;
+mongoose.connect(MONGO_URL)
 .then(() => {
     console.log("Connected to MongoDB successfully");
 })
