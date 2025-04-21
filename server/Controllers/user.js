@@ -1,6 +1,8 @@
 const User = require('../Modals/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const SECRET_KEY = process.env.SECRET_KEY;
 
 // Cookie config
 const cookieOptions = {
@@ -54,7 +56,7 @@ exports.userSignin = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: userExist._id }, 'secretkey');
+    const token = jwt.sign({ userId: userExist._id }, SECRET_KEY, { expiresIn: '1h' });
     res.cookie('token', token, cookieOptions);
 
     const cleanUser = {
