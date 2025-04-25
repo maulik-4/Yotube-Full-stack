@@ -3,6 +3,7 @@ import Sidebar from '../Components/Sidebar/Sidebar';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { useSearch } from '../utils/SearchContext';
+import ShimmerVideoCard from '../Components/ShimmerVideoCard';
 
 const Homepage = ({ SideBar }) => {
   const navigate = useNavigate();
@@ -92,7 +93,26 @@ const Homepage = ({ SideBar }) => {
               );
             })
           ) : (
-            <p className="text-center col-span-full text-gray-400">No videos found</p>
+            <div className="flex flex-col items-center justify-center w-[100vw] h-full">
+              <div className="item flex flex-col md:flex-row lg:flex-row items-center w-[100vw] ">
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              </div>
+              <div className="item flex flex-col md:flex-row lg:flex-row items-center w-[100vw] ">
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              </div>
+              <div className="item flex flex-col md:flex-row lg:flex-row items-center w-[100vw] ">
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              <ShimmerVideoCard />
+              </div>
+            </div>
           )}
         </div>
       </div>
