@@ -23,6 +23,7 @@ const Login = () => {
             if(res.data.success === "yes"){
                 const { user, token } = res.data;
                 localStorage.setItem("token" , token);
+                document.cookie = `token=${token}; path=/; max-age=86400`;
                 localStorage.setItem("user" , JSON.stringify(user));
                 
                 setTimeout(() => {

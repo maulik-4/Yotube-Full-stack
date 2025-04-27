@@ -7,9 +7,8 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // Cookie config
 const cookieOptions = {
-  httpOnly: true,
   secure: false,
-  sameSite: 'lax'
+  sameSite: 'none'
 };
 
 // Signup
