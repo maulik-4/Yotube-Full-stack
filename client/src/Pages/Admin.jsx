@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { toast,ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import axiosInstance from '../utils/axiosConfig';
+import { useNavigate } from 'react-router-dom';
 
 function Admin() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-   
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Check if user is admin
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user || user.role !== 'admin') {
+      toast.error("Access denied: Admin only");
+      navigate('/');
+      return;
+    }
+    
+    fetchUsers();
+  }, [navigate]);
+  
   const fetchUsers = async () => {
     try {
-      // Don't send Authorization header, just use withCredentials to send cookies
-      const res = await axios.get('https://yotube-full-stack.onrender.com/auth/all-users', { 
-        withCredentials: true 
-      });
+      // Use axiosInstance instead of axios
+      const res = await axiosInstance.get('/auth/all-users');
       
       const Data = res.data.users;
       const reqData = Data.filter((user) => user.role !== "admin");
@@ -29,9 +41,7 @@ function Admin() {
   console.log("Token:", localStorage.getItem('token'));
   const blockUser = async (id) => {
     try {
-      await axios.put(`https://yotube-full-stack.onrender.com/auth/block/${id}`, {}, { 
-        withCredentials: true 
-      });
+      await axiosInstance.put(`/auth/block/${id}`, {});
       fetchUsers();
       toast.success("User blocked successfully");
     } catch (err) {
@@ -42,9 +52,7 @@ function Admin() {
 
   const unblockUser = async (id) => {
     try {
-      await axios.put(`https://yotube-full-stack.onrender.com/auth/unblock/${id}`, {}, { 
-        withCredentials: true 
-      });
+      await axiosInstance.put(`/auth/unblock/${id}`, {});
       fetchUsers();
       toast.success("User unblocked successfully");
     } catch (err) {
@@ -52,10 +60,6 @@ function Admin() {
       toast.error("Failed to unblock user");
     }
   };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   if (loading) return <div>Loading...</div>;
 
