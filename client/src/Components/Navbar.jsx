@@ -1,11 +1,13 @@
 import { MdMenu } from "react-icons/md";
 import { FaYoutube, FaSearch, FaMicrophone, FaPlus } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { RiLogoutBoxRLine, RiUserLine } from "react-icons/ri";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCloudinary } from "../utils/CloudinaryContext";
 import { useSearch } from "../utils/SearchContext";
 import axios from "axios";
+import axiosInstance from "../utils/axiosConfig";
 
 const Navbar = ({ SideBar, SidbarHidden }) => {
   const navigate = useNavigate();
@@ -20,9 +22,6 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
   const [profPic, setProfPic] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpCKq1XnPYYDaUIlwlsvmLPZ-9-rdK28RToA&s"
   );
-
-
-
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -70,7 +69,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      setsearch(transcript); // ✅ Use context function correctly
+      setsearch(transcript);
       setIsListening(false);
     };
 
@@ -86,17 +85,14 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     recognitionRef.current = recognition;
   }, [setsearch]);
 
-
-
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    axios
-      .get("https://yotube-full-stack.onrender.com/auth/logout")
-      .then((res) => {
-       
+    localStorage.removeItem("deviceId");
+    
+    axiosInstance.get("/auth/logout")
+      .then(() => {
         window.location.reload();
-
       })
       .catch((err) => {
         console.log(err);
@@ -108,97 +104,137 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     setsearch(e.target.value);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    }
+  };
+
   return (
-    <nav className="bg-black text-white h-[60px] px-4 md:px-10 flex items-center justify-between">
-      {/* Left */}
-      <div className="flex items-center gap-4">
-        <MdMenu size={30} className="cursor-pointer" onClick={SidbarHidden} />
-        <div
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <FaYoutube color="red" size={32} />
-          <h1 className="text-lg md:text-xl font-bold">YouTube</h1>
-        </div>
-      </div>
-
-      {/* Middle */}
-      <div className="flex items-center gap-3 w-full max-w-[600px]">
-        <div className="relative w-full">
-          <input
-            type="text"
-            value={search}
-            onChange={handleSearchChange}
-            className="w-full px-5 py-2 rounded-full text-white outline-none border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-black"
-            placeholder="Search"
+    <nav className="bg-gradient-to-r from-gray-900 to-black text-white sticky top-0 z-50 shadow-lg shadow-black/50 backdrop-blur-sm">
+      <div className="h-[60px] px-2 sm:px-4 md:px-6 lg:px-10 flex items-center justify-between max-w-[2000px] mx-auto">
+        {/* Left */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <MdMenu 
+            size={28} 
+            className="cursor-pointer p-1 hover:bg-gray-700 rounded-full transition-colors" 
+            onClick={SidbarHidden} 
           />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition">
-            <FaSearch size={18} />
-          </button>
+          <div
+            onClick={() => navigate("/")}
+            className="flex items-center gap-1 sm:gap-2 cursor-pointer group"
+          >
+            <FaYoutube className="text-red-600 text-2xl sm:text-3xl group-hover:animate-pulse transition-all" />
+            <h1 className="text-base sm:text-xl font-bold tracking-tight group-hover:tracking-normal transition-all duration-300">YouTube</h1>
+          </div>
         </div>
-        <FaMicrophone
-          size={38}
-          title={isListening ? "Listening..." : "Click to Speak"}
-          onClick={() => {
-            if (recognitionRef.current && !isListening) {
-              setIsListening(true);
-              recognitionRef.current.start();
-            }
-          }}
-          className={`hidden md:block p-2 rounded-full cursor-pointer transition ${isListening ? "bg-blue-700 animate-pulse" : "bg-gray-800 hover:bg-gray-700"
+
+        {/* Middle */}
+        <form 
+          onSubmit={handleSearchSubmit}
+          className="flex items-center gap-2 w-full max-w-[200px] xs:max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] mx-2"
+        >
+          <div className="relative w-full">
+            <input
+              type="text"
+              value={search}
+              onChange={handleSearchChange}
+              className="w-full px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-white outline-none border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 transition-all duration-200 bg-gray-900/70 placeholder:text-gray-400 text-sm md:text-base"
+              placeholder="Search"
+            />
+            <button 
+              type="submit"
+              className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-1.5 rounded-full hover:bg-gray-700 transition-colors"
+            >
+              <FaSearch size={16} />
+            </button>
+          </div>
+          <button
+            type="button"
+            title={isListening ? "Listening..." : "Search with voice"}
+            onClick={() => {
+              if (recognitionRef.current && !isListening) {
+                setIsListening(true);
+                recognitionRef.current.start();
+              }
+            }}
+            className={`hidden sm:block p-2 rounded-full cursor-pointer transition-all duration-300 ${
+              isListening 
+                ? "bg-blue-700 animate-pulse" 
+                : "bg-gray-800 hover:bg-gray-700"
             }`}
-        />
-      </div>
+          >
+            <FaMicrophone size={18} />
+          </button>
+        </form>
 
-      {/* Right */}
-      <div className="flex items-center gap-4">
-        <div
-          className="flex items-center bg-gray-800 px-3 py-2 rounded-full cursor-pointer hover:bg-gray-700 transition"
-          onClick={() => navigate("/upload")}
-        >
-          <FaPlus />
-          <span className="ml-2 hidden md:inline">Create</span>
-        </div>
-        <IoIosNotificationsOutline
-          size={32}
-          className="bg-gray-800 p-2 rounded-full cursor-pointer"
-        />
+        {/* Right */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div
+            className="flex items-center bg-gray-800 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full cursor-pointer hover:bg-gray-700 transition-colors"
+            onClick={() => navigate("/upload")}
+          >
+            <FaPlus size={14} />
+            <span className="ml-1 hidden sm:inline text-sm">Create</span>
+          </div>
+          
+          <div className="relative group">
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full hidden group-hover:block"></div>
+            <IoIosNotificationsOutline
+              size={28}
+              className="bg-gray-800 p-1.5 rounded-full cursor-pointer hover:bg-gray-700 transition-colors"
+            />
+          </div>
 
-        <div className="relative" ref={loginRef}>
-          <img
-            src={imageUrl || profPic}
-            onClick={() => setShowLogin(!showLogin)}
-            className="w-10 h-10 object-cover rounded-full cursor-pointer"
-            alt="Profile"
-          />
-          {showLogin && (
-            <div className="absolute right-0 top-12 bg-gray-800 text-white rounded-lg shadow-lg w-40 flex flex-col z-50">
-              {token && (
-                <button
-                  className="py-2 px-4 hover:bg-gray-700"
-                  onClick={() => navigate(`/profile/${id}`)}
-                >
-                  Profile
-                </button>
-              )}
-              {!token && (
-                <button
-                  onClick={() => navigate("/login")}
-                  className="py-2 px-4 hover:bg-gray-700"
-                >
-                  Login
-                </button>
-              )}
-              {token && (
-                <button
-                  onClick={handleLogout}
-                  className="py-2 px-4 hover:bg-gray-700"
-                >
-                  Logout
-                </button>
-              )}
-            </div>
-          )}
+          <div className="relative" ref={loginRef}>
+            <img
+              src={imageUrl || profPic}
+              onClick={() => setShowLogin(!showLogin)}
+              className="w-8 h-8 sm:w-9 sm:h-9 object-cover rounded-full cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300"
+              alt="Profile"
+            />
+            
+            {showLogin && (
+              <div className="absolute right-0 top-12 bg-gray-800/95 backdrop-blur-sm text-white rounded-xl shadow-xl w-48 flex flex-col z-50 border border-gray-700 overflow-hidden animate-fadeIn">
+                {token && (
+                  <button
+                    className="py-3 px-4 hover:bg-gray-700 transition-colors flex items-center gap-2 text-left"
+                    onClick={() => {
+                      navigate(`/profile/${id}`);
+                      setShowLogin(false);
+                    }}
+                  >
+                    <RiUserLine size={18} />
+                    <span>Your Profile</span>
+                  </button>
+                )}
+                
+                {!token && (
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                      setShowLogin(false);
+                    }}
+                    className="py-3 px-4 hover:bg-gray-700 transition-colors flex items-center gap-2"
+                  >
+                    <RiUserLine size={18} />
+                    <span>Sign In</span>
+                  </button>
+                )}
+                
+                {token && (
+                  <button
+                    onClick={handleLogout}
+                    className="py-3 px-4 hover:bg-red-700 transition-colors flex items-center gap-2 text-left"
+                  >
+                    <RiLogoutBoxRLine size={18} />
+                    <span>Sign Out</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </nav>
