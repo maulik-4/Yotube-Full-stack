@@ -26,3 +26,6 @@ const auth = async (req, res, next) => {
         console.error(err);
     }
 };
+
+// Add this line to export the middleware function
+module.exports = auth;
