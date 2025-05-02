@@ -51,7 +51,6 @@ const Homepage = ({ SideBar }) => {
       <Sidebar SideBar={SideBar} />
 
       <div className="flex flex-col w-full overflow-x-hidden">
-        {/* Categories - Removed pt-4 to eliminate space */}
         <div className="sticky top-[60px] z-10 backdrop-blur-md bg-black/50 pb-2 px-4">
           <div className="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent py-2">
             {categories.map((category, index) => (
@@ -71,7 +70,7 @@ const Homepage = ({ SideBar }) => {
         </div>
 
         {/* Videos Grid */}
-        <div className="p-4 md:p-6 lg:p-8">
+        <div className="p-4  md:p-6 lg:p-8 mt-[5vh]  ">
           {/* Rest of the component remains the same */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
