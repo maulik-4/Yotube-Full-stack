@@ -4,7 +4,7 @@ import { MdEmail } from "react-icons/md";
 
 function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-gray-900 to-black text-gray-400 py-8 px-4 md:px-12 border-t border-gray-800/50 backdrop-blur-sm relative z-10 lg:ml-[240px] transition-all duration-300">
+    <footer className="bg-gradient-to-r from-gray-900 to-black text-gray-400 py-8 px-4 md:px-12 border-t border-gray-800/50 backdrop-blur-sm relative z-10 w-full transition-all duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Top Section with links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-gray-800/30">
@@ -20,7 +20,7 @@ function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links - Removed trending and subscriptions */}
           <div>
             <h3 className="text-white font-medium text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
@@ -28,13 +28,10 @@ function Footer() {
                 <a href="/" className="hover:text-blue-400 transition-colors duration-200">Home</a>
               </li>
               <li>
-                <a href="/trending" className="hover:text-blue-400 transition-colors duration-200">Trending</a>
+                <a href="https://portfolio-9dyt.vercel.app/" target='blank' className="hover:text-blue-400 transition-colors duration-200">Portfolio</a>
               </li>
               <li>
                 <a href="/upload" className="hover:text-blue-400 transition-colors duration-200">Upload</a>
-              </li>
-              <li>
-                <a href="/subscriptions" className="hover:text-blue-400 transition-colors duration-200">Subscriptions</a>
               </li>
             </ul>
           </div>
@@ -44,7 +41,7 @@ function Footer() {
             <h3 className="text-white font-medium text-lg mb-4">Connect</h3>
             <div className="flex gap-4 mb-4">
               <a
-                href="www.linkedin.com/in/maulik-vijay-681707283/"
+                href="https://www.linkedin.com/in/maulik-vijay-681707283/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-blue-600 text-white p-2.5 rounded-full transition-colors duration-300"
@@ -84,10 +81,10 @@ function Footer() {
             Made with passion by Maulik Vijay
           </p>
           <div className="text-sm">
-            <a href="/privacy" className="text-gray-500 hover:text-white transition-colors duration-200 mr-4">
+            <a  className="text-gray-500 cursor-pointer hover:text-white transition-colors duration-200 mr-4">
               Privacy
             </a>
-            <a href="/terms" className="text-gray-500 hover:text-white transition-colors duration-200">
+            <a  className="text-gray-500  cursor-pointer hover:text-white transition-colors duration-200">
               Terms
             </a>
           </div>

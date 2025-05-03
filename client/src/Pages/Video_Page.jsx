@@ -3,17 +3,17 @@ import Sidebar from '../Components/Sidebar/Sidebar';
 import { IoIosNotificationsOutline, IoMdShareAlt } from 'react-icons/io';
 import { AiFillLike, AiFillDislike } from 'react-icons/ai';
 import { RiDownloadLine } from 'react-icons/ri';
+import { BsDot } from 'react-icons/bs';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
-
 
 const Video_Page = ({ SideBar }) => {
   const { id } = useParams();
   const [video_Data, setvideo_Data] = useState(null);
   const [like, setLike] = useState();
   const [dislike, setdislike] = useState();
-  const [views , setviews] = useState();
+  const [views, setviews] = useState();
   const navigate = useNavigate();
   const videoLink = video_Data?.videoLink || 'https://www.w3schools.com/html/mov_bbb.mp4';
   const title = video_Data?.title || 'Loading...';
@@ -22,8 +22,7 @@ const Video_Page = ({ SideBar }) => {
   const profilePic = video_Data?.user?.profilePic || 'https://via.placeholder.com/150';
   const [videos, setVideos] = useState([]);
 
-
-
+  // All the handler functions remain the same
   const HandleLikes = async () => {
     try {
       const res = await axios.put(`https://yotube-full-stack.onrender.com/api/like/${id}`);
@@ -38,33 +37,35 @@ const Video_Page = ({ SideBar }) => {
       console.log(err);
     }
   }
+  
   const HandleDislike = async () => {
     try {
-      const res = await axios.put(`https://yotube-full-stack.onrender.comapi/dislike/${id}`);
+      const res = await axios.put(`https://yotube-full-stack.onrender.com/api/dislike/${id}`);
       const token = localStorage.getItem('token');
       if(!token){
         toast.error("Please Login to dislike the video");
         return;
       }
       setdislike(res.data.dislike);
-    
     }
     catch (err) {
       console.log(err);
     }
   }
-  const HanldeShare = async()=>{
+  
+  const HanldeShare = async() => {
     try{
       await navigator.clipboard.writeText(`https://yotube-full-stack.onrender.com/watch/${id}`);
-      toast.success("Link Copied to Clipboard") ;
+      toast.success("Link Copied to Clipboard");
     }
     catch(err){
       console.log(err);
     }
   }
-  const HandleViews = async() =>{
+  
+  const HandleViews = async() => {
     try{
-      const res =await axios.put(`https://yotube-full-stack.onrender.com/api/views/${id}`);
+      const res = await axios.put(`https://yotube-full-stack.onrender.com/api/views/${id}`);
       setviews(res.data.views);
     }
     catch(err){
@@ -72,6 +73,7 @@ const Video_Page = ({ SideBar }) => {
     }
   }
 
+  // useEffect hooks remain the same
   useEffect(() => {
     axios.get(`https://yotube-full-stack.onrender.com/api/getAllVideos/${id}`)
       .then((res) => {
@@ -81,9 +83,6 @@ const Video_Page = ({ SideBar }) => {
       })
       .catch((err) => console.log(err));
   }, [id]);
-
-  
-  
 
   useEffect(() => {
     axios.get("https://yotube-full-stack.onrender.com/api/getAllVideos")
@@ -95,99 +94,144 @@ const Video_Page = ({ SideBar }) => {
       .catch((err) => console.log(err));
   }, []);
 
-
+  // Format date function
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
 
   return (
-    <div className="flex bg-black text-white min-h-screen w-full mt-[5vh] flex-col md:flex-row">
-      {SideBar && <Sidebar />}
+    <div className="flex  bg-gradient-to-b from-gray-900 to-black text-white min-h-screen w-full  md:flex-row flex-col">
+      {/* Pass the SideBar prop to the Sidebar component */}
+      {SideBar && <Sidebar SideBar={SideBar} />}
       <ToastContainer position="top-right" autoClose={1000} theme="dark" />
 
-      <div className="flex flex-col px-4 md:px-12 w-full md:w-[70%]">
-
-        <div className="bg-gray-900 w-full h-auto rounded-lg mb-4 overflow-hidden">
-          <video
-            src={videoLink}
-            controls
-           
-            className="w-full h-[35vh] md:h-[70vh] object-cover rounded-xl"
-          />
-        </div>
-
-        <div className="video_info space-y-4">
-          <h1 className="font-bold text-xl md:text-3xl">{title}</h1>
-
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div onClick={() => {
-              navigate(`/profile/${video_Data?.user?._id}`)
-            }} className="flex items-center gap-3">
-              <img
-                src={profilePic}
-                className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover"
-                alt="User"
+      <div className={`flex-1 flex flex-col md:px-8 px-4 ${SideBar ? 'md:ml-0' : ''} transition-all duration-300`}>
+        {/* Main content area */}
+        <div className="flex flex-col md:flex-row gap-6 mt-4">
+          {/* Video section */}
+          <div className="w-full md:w-[70%]">
+            {/* Video player */}
+            <div className="relative bg-gray-900 w-full rounded-xl mb-4 overflow-hidden shadow-lg shadow-black/30">
+              <video
+                src={videoLink}
+                controls
+                className="w-full md:h-[500px] h-[240px] object-cover rounded-xl"
+                poster={video_Data?.thumbnail}
               />
-              <h2 className="font-bold text-lg md:text-xl">{channelName}</h2>
-              <button className="bg-gray-800 px-4 py-1 rounded-full flex items-center gap-2 text-base hover:bg-gray-700 transition">
-                <IoIosNotificationsOutline />
-                Subscribed
-              </button>
             </div>
 
-            <div className="flex gap-2">
-              <div className="flex items-center gap-2 bg-gray-800 px-4 py-1 rounded-lg">
-                <button onClick={HandleLikes} className="hover:text-blue-500 flex items-center gap-2">
-                  <AiFillLike />
-                  <span>{like || video_Data?.likes || 0}</span>
-                </button>
-                <button onClick={HandleDislike} className="hover:text-red-500 flex items-center gap-2">
-                  <AiFillDislike />
-                  <span>{dislike || video_Data?.dislike || 0}</span>
-                </button>
+            {/* Video info */}
+            <div className="bg-gray-800/20 backdrop-blur-sm shadow-lg p-4 rounded-xl mb-6">
+              <h1 className="font-bold text-xl md:text-2xl mb-3">{title}</h1>
+              
+              <div className="flex items-center text-gray-400 text-sm mb-4">
+                <span>{views || video_Data?.views || 0} views</span>
+                <BsDot className="mx-1" />
+                <span>{video_Data?.createdAt ? formatDate(video_Data.createdAt) : 'Recent'}</span>
               </div>
-              <button onClick={HanldeShare} className="flex items-center gap-2 bg-gray-800 px-4 py-1 rounded-lg hover:bg-gray-700 text-base">
-                <IoMdShareAlt />
-                <span>Share</span>
-              </button>
-              <button className="flex items-center gap-2 bg-gray-800 px-4 py-1 rounded-lg hover:bg-gray-700 text-base">
-                <RiDownloadLine />
-                <span>Download</span>
-              </button>
+
+              {/* Channel and interaction buttons */}
+              <div className="flex justify-between items-center flex-wrap gap-4 border-t border-b border-gray-700/50 py-4">
+                <div 
+                  onClick={() => navigate(`/profile/${video_Data?.user?._id}`)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <img
+                    src={profilePic}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
+                    alt="Channel"
+                  />
+                  <div>
+                    <h2 className="font-bold text-base md:text-lg">{channelName}</h2>
+                    <p className="text-xs text-gray-400">{video_Data?.user?.subscribers || 0} subscribers</p>
+                  </div>
+                  <button className="ml-2 bg-gray-800 hover:bg-gray-700 px-4 py-1.5 rounded-full flex items-center gap-2 text-sm transition-colors">
+                    <IoIosNotificationsOutline size={18} />
+                    <span>Subscribe</span>
+                  </button>
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
+                  <div className="flex bg-gray-800/80 hover:bg-gray-700/80 transition-colors rounded-full overflow-hidden">
+                    <button 
+                      onClick={HandleLikes} 
+                      className="px-4 py-2 flex items-center gap-1.5 hover:bg-blue-500/10 transition-colors border-r border-gray-700/50"
+                    >
+                      <AiFillLike size={18} className="text-blue-400" />
+                      <span className="text-sm">{like || video_Data?.likes || 0}</span>
+                    </button>
+                    <button 
+                      onClick={HandleDislike} 
+                      className="px-4 py-2 flex items-center gap-1.5 hover:bg-red-500/10 transition-colors"
+                    >
+                      <AiFillDislike size={18} className="text-red-400" />
+                      <span className="text-sm">{dislike || video_Data?.dislike || 0}</span>
+                    </button>
+                  </div>
+                  
+                  <button 
+                    onClick={HanldeShare} 
+                    className="flex items-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 px-4 py-2 rounded-full text-sm transition-colors"
+                  >
+                    <IoMdShareAlt size={18} />
+                    <span>Share</span>
+                  </button>
+                  
+                  <button 
+                    className="flex items-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 px-4 py-2 rounded-full text-sm transition-colors"
+                  >
+                    <RiDownloadLine size={18} />
+                    <span>Download</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mt-4 bg-gray-800/30 p-4 rounded-lg">
+                <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                  {description}
+                </p>
+              </div>
             </div>
           </div>
 
-          <p className="text-gray-300">
-            <span className='font-bold'>{views}  Views </span>  
-            {description}</p>
-        </div>
-      </div>
-
-
-      <div className="w-full md:w-[30%] px-4 mt-6 md:mt-0">
-        <h2 className="text-xl font-bold mb-3">Suggested Videos</h2>
-        <div className="space-y-4">
-          {videos.map((video) => (
-            <div key={video._id}>
-              <div
-                className="flex flex-col sm:flex-row gap-3 cursor-pointer"
-                onClick={() => navigate(`/watch/${video._id}`)}
-              >
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full sm:w-40 h-40 sm:h-24 object-cover rounded-lg"
-                />
-                <div className="flex flex-col justify-between">
-                  <h2 className="font-semibold text-base sm:text-lg line-clamp-2">
-                    {video.title}
-                  </h2>
-                  <p className="text-gray-400 text-sm">{video.user?.channelName}</p>
-                  <p className="text-gray-500 text-sm">{video.views} views</p>
+          {/* Suggested videos section */}
+          <div className="w-full md:w-[30%]">
+            <h2 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Suggested Videos</h2>
+            <div className="flex flex-col gap-4">
+              {videos.map((video) => (
+                <div 
+                  key={video._id} 
+                  className="bg-gray-800/20 hover:bg-gray-800/40 transition-colors duration-300 rounded-lg overflow-hidden shadow-md cursor-pointer"
+                  onClick={() => navigate(`/watch/${video._id}`)}
+                >
+                  <div className="flex flex-col">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-32 object-cover"
+                      loading="lazy"
+                    />
+                    <div className="p-3">
+                      <h3 className="font-medium text-sm line-clamp-2">{video.title}</h3>
+                      <p className="text-gray-400 text-xs mt-1">{video.user?.channelName}</p>
+                      <div className="flex items-center text-gray-500 text-xs mt-1">
+                        <span>{video.views} views</span>
+                        <BsDot className="mx-1" />
+                        <span>{formatDate(video.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <hr className="border-gray-700 my-4" />
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-
       </div>
     </div>
   );
