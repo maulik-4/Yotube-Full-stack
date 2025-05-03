@@ -169,9 +169,9 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
           </button>
         </form>
 
-        {/* Right section - BOTH CREATE AND PROFILE ALWAYS VISIBLE */}
+       
         <div className="flex items-center gap-0.5 xs:gap-2 sm:gap-4 ml-0.5 sm:ml-0">
-          {/* Create button - ALWAYS VISIBLE */}
+       
           <div
             className="flex items-center bg-gray-800 px-1 sm:px-3 py-1 sm:py-1.5 rounded-full cursor-pointer hover:bg-gray-700 transition-colors whitespace-nowrap"
             onClick={() => navigate("/upload")}
@@ -180,7 +180,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
             <span className="ml-1 hidden sm:!inline text-sm">Create</span>
           </div>
           
-          {/* Notifications (hidden on small screens) */}
+       
           <div className="relative group hidden sm:block">
             <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full hidden group-hover:block"></div>
             <IoIosNotificationsOutline
@@ -189,7 +189,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
             />
           </div>
 
-          {/* Profile - ALWAYS VISIBLE */}
+    
           <div className="relative flex" ref={loginRef}>
             <img
               src={imageUrl || profPic}
@@ -202,7 +202,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
               }}
             />
             
-            {/* Dropdown remains the same */}
+         
             {showLogin && (
               <div className="absolute right-0 top-10 sm:top-12 bg-gray-800/95 backdrop-blur-sm text-white rounded-xl shadow-xl w-48 flex flex-col z-50 border border-gray-700 overflow-hidden animate-fadeIn">
                 {token && (
