@@ -1,27 +1,22 @@
-const express= require('express');
-const userSignup = require('../Controllers/user');
-const auth = require('../middlewares/authentication');
-const isAdmin = require('../middlewares/isAdmin');
+const express = require('express');
+const userController = require('../Controllers/user');
+const authMiddleware = require('../middlewares/authentication');
+const adminMiddleware = require('../middlewares/isAdmin');
 
 const router = express.Router();
-//Routes
-router.post('/signup' ,userSignup.userSignup);
-router.post('/login' , userSignup.userSignin);
-router.get('/logout' , userSignup.userLogout);
 
+// Bind methods to preserve 'this' context
+const auth = authMiddleware.authenticate.bind(authMiddleware);
+const isAdmin = adminMiddleware.checkAdmin.bind(adminMiddleware);
 
-//admin
-router.put('/block/:id', auth, userSignup.blockUser);     
-router.put('/unblock/:id', auth, userSignup.unblockUser);  
-router.get('/all-users', auth, isAdmin, async (req, res) => {
-    try {
-        const users = await require('../Modals/user').find({});
-        res.status(200).json({ users });
-    } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).json({ message: "Error fetching users" });
-    }
-});
+// Routes
+router.post('/signup', userController.userSignup.bind(userController));
+router.post('/login', userController.userSignin.bind(userController));
+router.get('/logout', userController.userLogout.bind(userController));
 
+// Admin routes
+router.put('/block/:id', auth, userController.blockUser.bind(userController));
+router.put('/unblock/:id', auth, userController.unblockUser.bind(userController));
+router.get('/all-users', auth, isAdmin, userController.getAllUsers.bind(userController));
 
 module.exports = router;
