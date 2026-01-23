@@ -87,7 +87,15 @@ function Admin() {
               className="transition duration-200 ease-in-out hover:translate-x-0.5"
             >
               <td className="px-6 py-4 text-main">{user.userName}</td>
-              <td className="px-6 py-4 text-muted">{user.channelName}</td>
+              <td className="px-6 py-4 text-muted">
+                <button
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); navigate(`/profile/${user._id}`); }}
+                  className="text-blue-300 hover:underline"
+                >
+                  {user.channelName}
+                </button>
+              </td>
               <td className="px-6 py-4 capitalize text-muted">{user.role}</td>
               <td className="px-6 py-4">
                 <span
@@ -104,14 +112,16 @@ function Admin() {
                 {user.role !== "admin" && (
                   user.isBlocked ? (
                     <button
-                      onClick={() => unblockUser(user._id)}
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); unblockUser(user._id); }}
                       className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-md transition duration-200"
                     >
                       Unblock
                     </button>
                   ) : (
                     <button
-                      onClick={() => blockUser(user._id)}
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); blockUser(user._id); }}
                       className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md transition duration-200"
                     >
                       Block

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSearch } from '../utils/SearchContext';
 import axiosInstance from '../utils/axiosConfig';
 import ShimmerVideoCard from '../Components/ShimmerVideoCard';
+import Loader from '../Components/Loader';
 import { toast } from 'react-toastify';
 import VideoCard from '../Components/VideoCard'; // Correct import
 
@@ -73,11 +74,7 @@ const Homepage = ({ SideBar }) => {
         <div className="p-4  md:p-6 lg:p-8 mt-[5vh]  ">
           {/* Rest of the component remains the same */}
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {[...Array(12)].map((_, i) => (
-                <ShimmerVideoCard key={i} />
-              ))}
-            </div>
+            <Loader />
           ) : filteredVideos.length > 0 ? (
             <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredVideos.map((video) => (
