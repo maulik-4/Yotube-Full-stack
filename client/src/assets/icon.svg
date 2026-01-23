@@ -1,0 +1,18 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vidmoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff5f9e"/>
+      <stop offset="50%" stop-color="#7b5cff"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Camera body -->
+  <rect x="24" y="48" width="160" height="128" rx="28" fill="url(#vidmoGradient)"/>
+
+  <!-- Camera lens -->
+  <polygon points="184,88 232,112 232,144 184,168" fill="#38bdf8"/>
+
+  <!-- Play button -->
+  <polygon points="96,80 96,144 144,112" fill="#ffffff"/>
+</svg>

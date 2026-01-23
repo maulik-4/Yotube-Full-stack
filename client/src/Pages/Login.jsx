@@ -71,7 +71,7 @@ const Login = () => {
                     </div>
                     
                     {/* Form */}
-                    <div className="space-y-6">
+                    <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
                         <div className="space-y-4">
                             <div className="relative">
                                 <input 
@@ -104,12 +104,14 @@ const Login = () => {
                                 {loading ? 'Logging in...' : 'Login'}
                             </button>
                             <button 
+                                type="button"
                                 onClick={() => navigate('/signup')}
                                 className="flex-1 bg-transparent hover:opacity-90 text-main font-medium py-3 px-4 rounded-lg border border-soft transition-all duration-300"
                             >
                                 Sign Up
                             </button>
                             <button 
+                                type="button"
                                 onClick={() => navigate('/')}
                                 className="flex-1 bg-card hover:opacity-90 text-main font-medium py-3 px-4 rounded-lg transition-all duration-300"
                             >
@@ -123,7 +125,7 @@ const Login = () => {
                                 Forgot password?
                             </a>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
             <ToastContainer position="top-right" autoClose={3000} theme="dark" />

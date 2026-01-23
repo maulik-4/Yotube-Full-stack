@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../Components/Sidebar/Sidebar';
 import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
+import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Profile = ({ SideBar }) => {
   const [userVideos, setUserVideos] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editCategory, setEditCategory] = useState('');
 
   // Safely get user from localStorage
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
@@ -15,7 +21,7 @@ const Profile = ({ SideBar }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`https://yotube-full-stack.onrender.com/api/${id}/getAllVideosById`);
+        const res = await axiosInstance.get(`/api/${id}/getAllVideosById`);
         setUserVideos(res.data.data || []);
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -25,11 +31,7 @@ const Profile = ({ SideBar }) => {
     fetchUser();
   }, [id]);
 
-  useEffect(() => {
-    if (role === 'admin') {
-      navigate('/admin');
-    }
-  }, [role, navigate]);
+ 
 
   const userInfo = userVideos.length > 0 ? userVideos[0].user : null;
 
@@ -66,24 +68,100 @@ const Profile = ({ SideBar }) => {
           {userVideos.length > 0 ? (
             userVideos.map((video, index) => (
               <div
-                onClick={() => navigate(`/watch/${video._id}`)}
                 key={index}
-                className="video_card p-4 rounded-xl shadow-lg transition-all duration-300 cursor-pointer glass-card"
+                className="video_card p-4 rounded-xl shadow-lg transition-all duration-300 glass-card"
               >
-                <div
-                  className="video_thumbnail w-full h-40 rounded-lg mb-3 overflow-hidden"
-                  style={{
-                    backgroundImage: `url(${video.thumbnail})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                ></div>
-                <h1 className="text-lg font-semibold line-clamp-1">{video.title}</h1>
-                <h1 className="text-muted text-sm">{video.user.userName}</h1>
-                <div className="flex justify-between text-muted text-sm mt-2">
-                  <span>👁️ {video.views || 0}</span>
-                  <span>❤️ {video.likes || 0}</span>
+                <div onClick={() => navigate(`/watch/${video._id}`)} className="cursor-pointer">
+                  <div
+                    className="video_thumbnail w-full h-40 rounded-lg mb-3 overflow-hidden"
+                    style={{
+                      backgroundImage: `url(${video.thumbnail})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  ></div>
+                  <h1 className="text-lg font-semibold line-clamp-1">{video.title}</h1>
+                  <h1 className="text-muted text-sm">{video.user.userName}</h1>
+                  <div className="flex justify-between text-muted text-sm mt-2">
+                    <span>👁️ {video.views || 0}</span>
+                    <span>❤️ {video.likes || 0}</span>
+                  </div>
                 </div>
+
+                {user && user._id === video.user._id && (
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      className="px-3 py-1 border border-soft rounded"
+                      onClick={() => {
+                        setEditingId(video._id);
+                        setEditTitle(video.title || '');
+                        setEditDescription(video.description || '');
+                        setEditCategory(video.category || '');
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="px-3 py-1 accent-btn rounded"
+                      onClick={() => navigate(`/watch/${video._id}`)}
+                    >
+                      Open
+                    </button>
+                  </div>
+                )}
+
+                {editingId === video._id && (
+                  <div className="mt-3 glass-card p-3 rounded space-y-2">
+                    <input
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="w-full input-card p-2 rounded"
+                      placeholder="Title"
+                    />
+                    <textarea
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      className="w-full input-card p-2 rounded"
+                      rows={3}
+                      placeholder="Description"
+                    />
+                    <input
+                      value={editCategory}
+                      onChange={(e) => setEditCategory(e.target.value)}
+                      className="w-full input-card p-2 rounded"
+                      placeholder="Category"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        className="px-3 py-1 accent-btn rounded"
+                        onClick={async () => {
+                          try {
+                            await axiosInstance.put(`/api/${video._id}`, {
+                              title: editTitle,
+                              description: editDescription,
+                              category: editCategory,
+                            });
+                            toast.success('Video updated');
+                            setEditingId(null);
+                            const res = await axiosInstance.get(`/api/${id}/getAllVideosById`);
+                            setUserVideos(res.data.data || []);
+                          } catch (err) {
+                            console.error(err);
+                            toast.error('Failed to update video');
+                          }
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="px-3 py-1 border border-soft rounded"
+                        onClick={() => setEditingId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           ) : (

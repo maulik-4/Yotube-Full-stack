@@ -248,7 +248,21 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
                   <button
                     className="py-3 px-4 hover:bg-gray-700 transition-colors flex items-center gap-2 text-left"
                     onClick={() => {
-                      navigate(`/profile/${id}`);
+                      const storedUser = localStorage.getItem('user');
+                      let role = '';
+                      let userId = id;
+                      if (storedUser) {
+                        try {
+                          const parsed = JSON.parse(storedUser);
+                          role = parsed.role;
+                          userId = userId || parsed._id;
+                        } catch (e) {}
+                      }
+                      if (role === 'admin') {
+                        navigate('/admin');
+                      } else if (userId) {
+                        navigate(`/profile/${userId}`);
+                      }
                       setShowLogin(false);
                     }}
                   >
