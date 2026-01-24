@@ -6,22 +6,17 @@ const redisClient = createClient({
 
 let isConnected = false;
 
-redisClient.on("error", (err) => {
-  console.error("Redis error:", err.message);
+redisClient.on("error", () => {
   isConnected = false;
 });
 
-redisClient.on("connect", () => {
-  console.log("Redis connecting...");
-});
+redisClient.on("connect", () => {});
 
 redisClient.on("ready", () => {
-  console.log("✓ Redis connected successfully");
   isConnected = true;
 });
 
 redisClient.on("end", () => {
-  console.log("Redis disconnected");
   isConnected = false;
 });
 
@@ -30,8 +25,7 @@ redisClient.on("end", () => {
   try {
     await redisClient.connect();
   } catch (err) {
-    console.error("⚠ Redis connection failed:", err.message);
-    console.log("⚠ Application will continue without Redis (caching & rate limiting disabled)");
+    // Continue without Redis
   }
 })();
 

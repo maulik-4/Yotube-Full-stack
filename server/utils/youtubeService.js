@@ -11,7 +11,7 @@ class YouTubeService {
         this.baseUrl = 'https://www.googleapis.com/youtube/v3';
         
         if (!this.apiKey) {
-            console.warn('⚠️ YOUTUBE_API_KEY not found in environment variables. YouTube history will not work.');
+            
         }
     }
 
@@ -64,7 +64,7 @@ class YouTubeService {
                 throw new Error('Video not found');
             }
             
-            console.error('YouTube API Error:', error.message);
+            
             throw new Error('Failed to fetch YouTube video metadata');
         }
     }

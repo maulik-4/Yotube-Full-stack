@@ -22,9 +22,7 @@ const colors = {
   reset: '\x1b[0m'
 };
 
-function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
-}
+function log() {}
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));

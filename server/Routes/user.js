@@ -22,6 +22,7 @@ router.get('/logout', userController.userLogout.bind(userController));
 router.post('/subscribe/:id', auth, userController.subscribe.bind(userController));
 router.post('/unsubscribe/:id', auth, userController.unsubscribe.bind(userController));
 router.get('/subscriptions/videos', auth, userController.getSubscriptionsVideos.bind(userController));
+router.get('/subscriptions/list', auth, userController.getSubscriptionsList.bind(userController));
 
 // Admin role change
 router.put('/change-role/:id', auth, isAdmin, userController.changeRole.bind(userController));

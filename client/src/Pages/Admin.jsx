@@ -29,23 +29,21 @@ function Admin() {
       const reqData = Data.filter((user) => user.role !== "admin");
       setUsers(reqData);
     } catch (err) {
-      console.error("Error fetching users:", err);
-      console.error("Response data:", err.response?.data);
-      console.error("Status:", err.response?.status);
+      
       toast.error("Failed to fetch users: " + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
   };
 
-  console.log("Token:", localStorage.getItem('token'));
+  
   const blockUser = async (id) => {
     try {
       await axiosInstance.put(`/auth/block/${id}`, {});
       fetchUsers();
       toast.success("User blocked successfully");
     } catch (err) {
-      console.error("Error blocking user:", err);
+      
       toast.error("Failed to block user");
     }
   };
@@ -56,7 +54,7 @@ function Admin() {
       fetchUsers();
       toast.success("User unblocked successfully");
     } catch (err) {
-      console.error("Error unblocking user:", err);
+      
       toast.error("Failed to unblock user");
     }
   };
@@ -67,7 +65,7 @@ function Admin() {
       fetchUsers();
       toast.success('Role updated');
     } catch (err) {
-      console.error('Error changing role:', err);
+      
       toast.error('Failed to change role');
     }
   };

@@ -14,17 +14,13 @@ const youtubeService = require('../utils/youtubeService');
  */
 const saveHistory = async (req, res) => {
     try {
-        console.log('📝 saveHistory called');
-        console.log('🔐 req.user:', req.user);
         
         const userId = req.user._id; // From authentication middleware
         const { videoId, platform, progress, duration, title, thumbnail, channelName } = req.body;
 
-        console.log('📊 Received data:', { videoId, platform, progress, duration });
 
         // Validation
         if (!videoId || !platform) {
-            console.warn('❌ Missing required fields');
             return res.status(400).json({
                 success: false,
                 message: 'videoId and platform are required'
@@ -32,7 +28,6 @@ const saveHistory = async (req, res) => {
         }
 
         if (!['local', 'youtube'].includes(platform)) {
-            console.warn('❌ Invalid platform:', platform);
             return res.status(400).json({
                 success: false,
                 message: 'platform must be "local" or "youtube"'
@@ -42,7 +37,6 @@ const saveHistory = async (req, res) => {
         // Minimum watch time threshold (5 seconds)
         const MIN_WATCH_TIME = 5;
         if (progress < MIN_WATCH_TIME) {
-            console.log('⏱️  Video watched < 5 seconds, skipping save');
             return res.status(200).json({
                 success: true,
                 message: 'Video watched for less than 5 seconds, not saved to history'
@@ -53,12 +47,10 @@ const saveHistory = async (req, res) => {
 
         // Fetch metadata based on platform
         if (platform === 'local') {
-            console.log('🎬 Fetching local video metadata for:', videoId);
             // For local videos, fetch from database
             const video = await Video.findById(videoId).populate('user', 'channelName profilePic');
             
             if (!video) {
-                console.error('❌ Local video not found:', videoId);
                 return res.status(404).json({
                     success: false,
                     message: 'Video not found'
@@ -72,17 +64,13 @@ const saveHistory = async (req, res) => {
                 uploadedBy: video.user?._id,
                 duration: duration || 0
             };
-            console.log('✅ Local video metadata fetched');
         } else {
             // For YouTube videos, use provided data or fetch from API
-            console.log('📺 Processing YouTube video:', videoId);
             if (title && thumbnail && channelName) {
-                console.log('✅ Using provided YouTube metadata');
                 videoData = { title, thumbnail, channelName, duration: duration || 0 };
             } else {
                 // Fallback: fetch from YouTube API
                 try {
-                    console.log('🔗 Fetching from YouTube API...');
                     const ytMetadata = await youtubeService.getVideoMetadata(videoId);
                     videoData = {
                         title: ytMetadata.title,
@@ -90,9 +78,8 @@ const saveHistory = async (req, res) => {
                         channelName: ytMetadata.channelName,
                         duration: ytMetadata.duration
                     };
-                    console.log('✅ YouTube metadata fetched from API');
                 } catch (error) {
-                    console.warn('⚠️ YouTube API failed, using fallback');
+                    // YouTube API failed; using provided/fallback data
                     // If YouTube API fails, use provided data or defaults
                     videoData = {
                         title: title || 'YouTube Video',
@@ -104,7 +91,6 @@ const saveHistory = async (req, res) => {
             }
         }
 
-        console.log('💾 Upserting history entry...');
         // Upsert history (update if exists, create if not)
         const historyEntry = await History.findOneAndUpdate(
             { user: userId, videoId, platform },
@@ -124,7 +110,6 @@ const saveHistory = async (req, res) => {
             }
         );
 
-        console.log('✅ History entry saved/updated:', historyEntry._id);
 
         // Update completion status
         historyEntry.updateCompletionStatus();
@@ -133,7 +118,6 @@ const saveHistory = async (req, res) => {
         // Clean old history (keep only latest 100)
         await History.cleanOldHistory(userId, 100);
 
-        console.log('🎉 History saved successfully');
         res.status(200).json({
             success: true,
             message: 'History saved successfully',
@@ -141,11 +125,10 @@ const saveHistory = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Save history error:', error);
+        
         
         // Handle duplicate key error (race condition)
         if (error.code === 11000) {
-            console.error('🔑 Duplicate key error');
             return res.status(409).json({
                 success: false,
                 message: 'History entry already exists'
@@ -215,7 +198,7 @@ const getHistory = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get history error:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to fetch history',
@@ -427,7 +410,7 @@ const getHistoryAnalytics = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Get history analytics error:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to fetch analytics',
@@ -453,7 +436,7 @@ const clearHistory = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Clear history error:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to clear history',
@@ -500,7 +483,7 @@ const deleteHistoryItem = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Delete history item error:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to delete history item',
@@ -546,7 +529,7 @@ const getHistoryItem = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get history item error:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to fetch history item',
@@ -578,7 +561,7 @@ const getYouTubeMetadata = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('YouTube metadata error:', error);
+        
         res.status(500).json({
             success: false,
             message: error.message || 'Failed to fetch YouTube metadata'

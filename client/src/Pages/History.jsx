@@ -49,7 +49,7 @@ const History = ({ SideBar }) => {
         setTotalPages(response.data.pagination.totalPages);
       }
     } catch (error) {
-      console.error('Failed to fetch history:', error);
+      
       if (error.response?.status === 401) {
         toast.error('Please login to view history');
         navigate('/login');
@@ -84,7 +84,7 @@ const History = ({ SideBar }) => {
         ));
       }
     } catch (error) {
-      console.error('Failed to delete history item:', error);
+      
       toast.error('Failed to remove from history');
     }
   };
@@ -103,7 +103,7 @@ const History = ({ SideBar }) => {
         setPage(1);
       }
     } catch (error) {
-      console.error('Failed to clear history:', error);
+      
       toast.error('Failed to clear history');
     }
   };

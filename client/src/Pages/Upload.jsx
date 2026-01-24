@@ -56,7 +56,7 @@ const Upload = () => {
       }
     } catch (err) {
       toast.error("⚠️ Upload failed. Try again.");
-      console.error(err);
+      
     } finally {
       setLoading(prev => ({ ...prev, [type === "videoLink" ? "video" : "thumbnail"]: false }));
     }
@@ -83,7 +83,7 @@ const Upload = () => {
       toast.success("🎉 Video uploaded successfully!");
       setTimeout(() => navigate('/'), 1500);
     } catch (err) {
-      console.error(err);
+      
       toast.error(err.response?.data?.message || "❌ Upload failed. Please try again.");
     }
   };

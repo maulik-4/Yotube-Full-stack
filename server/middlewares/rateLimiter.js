@@ -72,7 +72,6 @@ class RateLimiter {
 
         next();
       } catch (error) {
-        console.error('Rate limiter error:', error);
         // If Redis fails, allow the request to proceed (fail open)
         next();
       }

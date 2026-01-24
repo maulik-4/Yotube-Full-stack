@@ -1,13 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaHistory, FaClock, FaThumbsUp, FaFire, FaMusic, FaGamepad, FaNewspaper, FaRunning } from "react-icons/fa";
 import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlineSubscriptions, MdVideoLibrary, MdPlaylistPlay } from "react-icons/md";
 import { IoMdArrowDropdown } from "react-icons/io";
 import './Sidebar.css'
+import axiosInstance from '../../utils/axiosConfig';
 
 const Sidebar = ({SideBar}) => {
   const navigate = useNavigate();
+  const [subs, setSubs] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState('');
+
+  useEffect(() => {
+    // Fetch subscribed channels for the logged-in user
+    axiosInstance.get('/auth/subscriptions/list')
+      .then(res => {
+        if (res.data?.data) setSubs(res.data.data);
+      })
+      .catch(() => {})
+  }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        if (parsed?._id) setCurrentUserId(parsed._id);
+      } catch (e) {
+        // ignore parse errors
+      }
+    }
+  }, []);
 
   return (
     <div className={`
@@ -29,7 +53,11 @@ const Sidebar = ({SideBar}) => {
       <div className="flex flex-col gap-3">
         <SidebarItem onClick={() => navigate('/analytics')} icon={<MdVideoLibrary size={20} className="text-purple-400" />} text="Library" />
         <SidebarItem onClick={() => navigate('/history')} icon={<FaHistory size={20} className="text-blue-400" />} text="History" />
-        <SidebarItem icon={<MdPlaylistPlay size={20} className="text-yellow-400" />} text="Your Videos" />
+        <SidebarItem
+          onClick={() => currentUserId ? navigate(`/profile/${currentUserId}`) : navigate('/login')}
+          icon={<MdPlaylistPlay size={20} className="text-yellow-400" />}
+          text="Your Videos"
+        />
         <SidebarItem icon={<FaClock size={20} className="text-green-400" />} text="Watch Later" />
         <SidebarItem icon={<FaThumbsUp size={20} className="text-red-400" />} text="Liked Videos" />
         <SidebarItem icon={<IoMdArrowDropdown size={20} className="text-gray-400" />} text="Show More" />
@@ -39,10 +67,28 @@ const Sidebar = ({SideBar}) => {
       {/* Subscription Channels */}
       <h2 className="text-muted text-sm font-medium px-2 mb-2">Subscriptions</h2>
       <div className="flex flex-col gap-3">
-        <SidebarItem icon={<div className="rounded-full w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 shadow-inner"></div>} text="Channel 1" />
-        <SidebarItem icon={<div className="rounded-full w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-500 shadow-inner"></div>} text="Channel 2" />
-        <SidebarItem icon={<div className="rounded-full w-6 h-6 bg-gradient-to-br from-green-500 to-teal-500 shadow-inner"></div>} text="Channel 3" />
-        <SidebarItem icon={<IoMdArrowDropdown size={20} className="text-gray-400" />} text="Show More" />
+        {subs.length === 0 && (
+          <span className="px-3 text-sm opacity-60">No subscriptions yet</span>
+        )}
+        {subs.slice(0, 8).map((ch) => (
+          <SidebarItem
+            key={ch._id}
+            onClick={() => navigate(`/profile/${ch._id}`)}
+            icon={
+              <div className="rounded-full w-8 h-8 overflow-hidden bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
+                {ch.profilePic ? (
+                  <img src={ch.profilePic} alt={ch.channelName || ch.userName} className="w-full h-full object-cover" />
+                ) : (
+                  (ch.channelName || ch.userName || '?').slice(0, 2).toUpperCase()
+                )}
+              </div>
+            }
+            text={ch.channelName || ch.userName || 'Channel'}
+          />
+        ))}
+        {subs.length > 8 && (
+          <SidebarItem icon={<IoMdArrowDropdown size={20} className="text-gray-400" />} text={`Show ${subs.length - 8} more`} onClick={() => navigate('/subscriptions')} />
+        )}
       </div>
       <hr className="my-3 border-gray-800" />
 

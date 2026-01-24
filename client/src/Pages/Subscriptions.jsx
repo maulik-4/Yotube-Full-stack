@@ -14,7 +14,7 @@ const Subscriptions = ({ SideBar }) => {
       .then(res => {
         setVideos(res.data.data || []);
       })
-      .catch(err => console.error(err))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

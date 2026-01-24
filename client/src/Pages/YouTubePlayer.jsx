@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import historyTracker from '../utils/historyTracker';
 import axiosInstance from '../utils/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
-
+          
 const YouTubePlayer = () => {
   const { videoId } = useParams();
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const YouTubePlayer = () => {
         setVideoMetadata(response.data.data);
       }
     } catch (error) {
-      console.error('Failed to fetch YouTube metadata:', error);
+      
       // Use fallback metadata
       setVideoMetadata({
         title: 'YouTube Video',
@@ -128,7 +128,7 @@ const YouTubePlayer = () => {
             duration: duration
           };
 
-          console.log(`📺 Tracking YouTube: ${currentTime}s / ${duration}s`);
+          
           
           historyTracker.trackProgress({
             videoId: videoId,
@@ -140,7 +140,7 @@ const YouTubePlayer = () => {
             channelName: trackingData.channelName
           });
         } catch (error) {
-          console.error('❌ Failed to track YouTube progress:', error);
+          
         }
       }
     }, 10000); // Every 10 seconds
@@ -165,7 +165,7 @@ const YouTubePlayer = () => {
           duration: duration
         };
 
-        console.log(`📺 Saving YouTube progress on stop: ${currentTime}s / ${duration}s`);
+        
         
         historyTracker.trackProgress({
           videoId: videoId,
@@ -177,7 +177,7 @@ const YouTubePlayer = () => {
           channelName: trackingData.channelName
         });
       } catch (error) {
-        console.error('❌ Failed to save YouTube progress:', error);
+        
       }
     }
   };
@@ -201,7 +201,7 @@ const YouTubePlayer = () => {
         try {
           playerRef.current.playVideo();
         } catch (error) {
-          console.error('Failed to resume playback:', error);
+          
         }
       }
     };
@@ -211,7 +211,7 @@ const YouTubePlayer = () => {
     // Cleanup on unmount - save progress immediately
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      console.log('🚪 Unmounting YouTubePlayer, saving history...');
+      
       
       // Save current progress immediately before leaving
       if (playerRef.current) {
@@ -243,7 +243,7 @@ const YouTubePlayer = () => {
             historyTracker.DEBOUNCE_TIME = 5000; // Reset debounce
           }
         } catch (error) {
-          console.error('Failed to save on unmount:', error);
+          
         }
       }
     };

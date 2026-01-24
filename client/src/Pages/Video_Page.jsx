@@ -9,7 +9,7 @@ import axiosInstance from '../utils/axiosConfig';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import historyTracker from '../utils/historyTracker';
-
+      
 const Video_Page = ({ SideBar }) => {
   const { id } = useParams();
   const [video_Data, setvideo_Data] = useState(null);
@@ -49,7 +49,7 @@ const Video_Page = ({ SideBar }) => {
       setLike(res.data.likes);
     }
     catch (err) {
-      console.log(err);
+      
     }
   }
   
@@ -64,7 +64,7 @@ const Video_Page = ({ SideBar }) => {
       setdislike(res.data.dislike);
     }
     catch (err) {
-      console.log(err);
+      
     }
   }
   
@@ -74,7 +74,7 @@ const Video_Page = ({ SideBar }) => {
       toast.success("Link Copied to Clipboard");
     }
     catch(err){
-      console.log(err);
+      
     }
   }
   
@@ -84,7 +84,7 @@ const Video_Page = ({ SideBar }) => {
       setviews(res.data.views);
     }
     catch(err){
-      console.log(err);
+      
     }
   }
 
@@ -103,7 +103,7 @@ const Video_Page = ({ SideBar }) => {
         // Load resume time from history
         loadResumeTime(id);
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   }, [id]);
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const Video_Page = ({ SideBar }) => {
         const unblockedVideos = data.filter(video => !video.user.isBlocked);
         setVideos(unblockedVideos);
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   }, []);
 
   const postComment = async () => {
@@ -126,7 +126,7 @@ const Video_Page = ({ SideBar }) => {
       setCommentText('');
       toast.success('Comment added');
     } catch (err) {
-      console.error(err);
+      
       toast.error('Failed to add comment');
     }
   };
@@ -145,7 +145,7 @@ const Video_Page = ({ SideBar }) => {
       setEditingCommentText('');
       toast.success('Comment updated');
     } catch (err) {
-      console.error(err);
+      
       toast.error('Failed to update comment');
     }
   };
@@ -162,7 +162,7 @@ const Video_Page = ({ SideBar }) => {
       setIsEditingVideo(false);
       toast.success('Video updated');
     } catch (err) {
-      console.error(err);
+      
       toast.error('Failed to update video');
     }
   };
@@ -181,7 +181,7 @@ const Video_Page = ({ SideBar }) => {
         toast.success('Subscribed');
       }
     } catch (err) {
-      console.error(err);
+      
       toast.error('Subscription failed');
     }
   };
@@ -227,7 +227,7 @@ const Video_Page = ({ SideBar }) => {
   // Cleanup on unmount - Save progress immediately
   useEffect(() => {
     return () => {
-      console.log('🚪 Unmounting Video_Page, saving history...');
+      
       // Save current progress immediately before leaving
       if (videoRef.current && video_Data) {
         const currentTime = videoRef.current.currentTime;

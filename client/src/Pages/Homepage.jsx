@@ -38,7 +38,7 @@ const Homepage = ({ SideBar }) => {
         setVideos(data);
       })
       .catch((err) => {
-        console.error("Error fetching videos:", err);
+        
         toast.error("Failed to load videos. Please try again later.");
       })
       .finally(() => {

@@ -34,7 +34,6 @@ class UserController {
 
       res.status(200).json({ message: "Subscribed" });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Failed to subscribe" });
     }
   }
@@ -55,7 +54,6 @@ class UserController {
 
       res.status(200).json({ message: "Unsubscribed" });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Failed to unsubscribe" });
     }
   }
@@ -68,8 +66,26 @@ class UserController {
       const videos = await Video.find({ user: { $in: subs } }).populate('user', 'userName channelName profilePic');
       res.status(200).json({ success: 'yes', data: videos });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Failed to fetch subscriptions videos" });
+    }
+  }
+
+  // Get subscribed channels list (names, avatars)
+  async getSubscriptionsList(req, res) {
+    try {
+      const subs = req.user.subscriptions || [];
+      if (!subs.length) {
+        return res.status(200).json({ success: 'yes', data: [] });
+      }
+
+      const users = await User.find({ _id: { $in: subs } })
+        .select('_id channelName userName profilePic subscribersCount')
+        .lean();
+
+      res.status(200).json({ success: 'yes', data: users });
+    } catch (err) {
+      
+      res.status(500).json({ message: 'Failed to fetch subscriptions list' });
     }
   }
 
@@ -83,7 +99,6 @@ class UserController {
       if (!user) return res.status(404).json({ message: 'User not found' });
       res.status(200).json({ message: 'Role updated', user });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: 'Failed to change role' });
     }
   }
@@ -96,7 +111,6 @@ class UserController {
       if (!user) return res.status(404).json({ message: 'Channel not found' });
       res.status(200).json({ success: 'yes', data: user });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: 'Failed to fetch channel' });
     }
   }
@@ -126,7 +140,6 @@ class UserController {
 
       res.status(201).json({ message: "User created successfully", success: "yes", data: newUser });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -177,7 +190,6 @@ class UserController {
       });
 
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -221,7 +233,7 @@ class UserController {
       const users = await User.find({});
       res.status(200).json({ users });
     } catch (err) {
-      console.error("Error fetching users:", err);
+      
       res.status(500).json({ message: "Error fetching users" });
     }
   }

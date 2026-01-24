@@ -24,7 +24,7 @@ const Profile = ({ SideBar }) => {
         const res = await axiosInstance.get(`/api/${id}/getAllVideosById`);
         setUserVideos(res.data.data || []);
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        
       }
     };
 
@@ -146,7 +146,7 @@ const Profile = ({ SideBar }) => {
                             const res = await axiosInstance.get(`/api/${id}/getAllVideosById`);
                             setUserVideos(res.data.data || []);
                           } catch (err) {
-                            console.error(err);
+                            
                             toast.error('Failed to update video');
                           }
                         }}

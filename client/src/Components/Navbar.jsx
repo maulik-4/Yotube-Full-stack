@@ -54,7 +54,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
           setid(parsedUser._id);
         }
       } catch (error) {
-        console.error("Error parsing user from localStorage:", error);
+        
       }
     }
   }, []);
@@ -78,7 +78,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      console.error("Speech Recognition API not supported");
+      
       return;
     }
 
@@ -94,8 +94,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
       setIsListening(false);
     };
 
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
+    recognition.onerror = () => {
       setIsListening(false);
     };
 
@@ -115,8 +114,7 @@ const Navbar = ({ SideBar, SidbarHidden }) => {
       .then(() => {
         window.location.reload();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
       });
     navigate("/login");
   };

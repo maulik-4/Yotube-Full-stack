@@ -111,7 +111,6 @@ const Analytics = ({ SideBar }) => {
           setError(null);
         }
       } catch (err) {
-        console.error('Failed to load analytics', err);
         const status = err.response?.status;
         const message = err.response?.data?.message || err.message;
         setError({ status, message });

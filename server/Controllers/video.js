@@ -5,7 +5,6 @@ class VideoController {
   constructor() {}
 
   async videoUpload(req, res) {
-    console.log("Upload route hit by user:", req.user);
     try {
       const { title, description, videoLink, category, thumbnail } = req.body;
       const videoUpload = new Video({
@@ -19,7 +18,7 @@ class VideoController {
       await videoUpload.save();
       res.status(201).json({ message: "Video uploaded successfully", success: "yes", data: videoUpload });
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -33,7 +32,7 @@ class VideoController {
       const cachedVideos = await redisClient.get(CACHE_KEY);
 
       if (cachedVideos) {
-        console.log("HOME VIDEOS CACHE HIT");
+        
         return res.status(200).json({
           message: "Videos fetched successfully",
           success: "yes",
@@ -41,11 +40,11 @@ class VideoController {
         });
       }
     } catch (redisErr) {
-      console.error("Redis read failed:", redisErr);
+      
       // continue to DB (never break API)
     }
 
-    console.log("HOME VIDEOS CACHE MISS");
+    
 
     // 2️⃣ Fetch from DB
     const videos = await Video.find()
@@ -60,7 +59,7 @@ class VideoController {
         { EX: 300 } // 5 minutes
       );
     } catch (redisErr) {
-      console.error("Redis write failed:", redisErr);
+      
     }
 
     // 4️⃣ Return response
@@ -71,7 +70,7 @@ class VideoController {
     });
 
   } catch (err) {
-    console.error(err);
+    
     res.status(500).json({ message: "Internal server error" });
   }
   }
@@ -86,7 +85,7 @@ class VideoController {
       }
       res.status(200).json({ message: "Video fetched successfully", success: "yes", data: videoData });
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -100,7 +99,7 @@ class VideoController {
       }
       res.status(200).json({ message: "Videos fetched successfully", success: "yes", data: videos });
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -119,7 +118,7 @@ class VideoController {
         likes: updatedVideo.likes
       });
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -138,7 +137,7 @@ class VideoController {
         dislike: updatedVideo.dislike
       });
     } catch (err) {
-      console.log(err);
+      
       res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -157,7 +156,7 @@ class VideoController {
         views: updatedVideo.views
       });
     } catch (err) {
-      console.log(err);
+      
     }
   }
 
@@ -176,7 +175,7 @@ class VideoController {
       await video.populate({ path: 'comments.user', select: 'userName channelName profilePic' });
       res.status(201).json({ message: 'Comment added', comment: video.comments[video.comments.length - 1] });
     } catch (err) {
-      console.error(err);
+      
       res.status(500).json({ message: 'Failed to add comment' });
     }
   }
@@ -197,7 +196,7 @@ class VideoController {
       await video.save();
       res.status(200).json({ message: 'Comment updated', comment });
     } catch (err) {
-      console.error(err);
+      
       res.status(500).json({ message: 'Failed to edit comment' });
     }
   }
@@ -219,7 +218,7 @@ class VideoController {
       await video.save();
       res.status(200).json({ message: 'Video updated', data: video });
     } catch (err) {
-      console.error(err);
+      
       res.status(500).json({ message: 'Failed to update video' });
     }
   }
@@ -240,7 +239,7 @@ class VideoController {
       try {
         const cachedResults = await redisClient.get(CACHE_KEY);
         if (cachedResults) {
-          console.log("SEARCH CACHE HIT");
+          
           return res.status(200).json({
             message: "Search results fetched successfully",
             success: "yes",
@@ -248,10 +247,10 @@ class VideoController {
           });
         }
       } catch (redisErr) {
-        console.error("Redis read failed:", redisErr);
+        
       }
 
-      console.log("SEARCH CACHE MISS");
+      
 
       // Search in database
       const videos = await Video.find({
@@ -272,7 +271,7 @@ class VideoController {
           { EX: 300 }
         );
       } catch (redisErr) {
-        console.error("Redis write failed:", redisErr);
+        
       }
 
       res.status(200).json({
@@ -281,7 +280,7 @@ class VideoController {
         data: videos
       });
     } catch (err) {
-      console.error(err);
+      
       res.status(500).json({ message: "Search failed" });
     }
   }

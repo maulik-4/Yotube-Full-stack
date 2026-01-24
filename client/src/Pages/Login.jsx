@@ -52,7 +52,7 @@ const Login = () => {
             }
         })
         .catch((err) => {
-            console.log(err);
+            
             toast.error("Invalid Credentials");
         })
         .finally(() => {
